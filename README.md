@@ -97,6 +97,42 @@ Após o cancelamento, o cartão passa para a situação `CANCELADO`.
   "subproduto": "PLATINUM"
 }
 
+## 🐇 RabbitMQ e Banco
+
+O projeto sobe com **H2 em memória** por padrão.
+
+Se quiser usar infraestrutura local com containers, existe um [docker-compose.yml](docker-compose.yml) com:
+
+- RabbitMQ em `localhost:5672`
+- RabbitMQ Management em `http://localhost:15672`
+- PostgreSQL em `localhost:5432`
+
+### Subir apenas RabbitMQ
+
+```powershell
+docker compose up -d rabbitmq
+```
+
+### Subir RabbitMQ e PostgreSQL
+
+```powershell
+docker compose up -d rabbitmq postgres
+```
+
+### Rodar com H2
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+### Rodar com PostgreSQL
+
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=postgres"
+```
+
+O profile `postgres` usa as propriedades definidas em [src/main/resources/application-postgres.yml](src/main/resources/application-postgres.yml).
+
 ---
 
 ## 👤 Autor

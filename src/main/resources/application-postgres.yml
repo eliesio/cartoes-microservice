@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cartoesdb}
+    username: ${DB_USERNAME:cartoes}
+    password: ${DB_PASSWORD:cartoes}
+    driver-class-name: org.postgresql.Driver
+  h2:
+    console:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
