@@ -96,3 +96,9 @@ Após o cancelamento, o cartão passa para a situação `CANCELADO`.
   "produto": "CREDITO",
   "subproduto": "PLATINUM"
 }
+
+---
+
+## 👤 Autor
+
+Desenvolvido por Eliesio Junior Targino de Lima.
