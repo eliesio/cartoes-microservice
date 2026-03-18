@@ -18,15 +18,39 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public Queue cartaoQueue(RabbitMqProperties properties) {
-        return new Queue(properties.queue(), true);
+    public Queue cartaoCriadoQueue(RabbitMqProperties properties) {
+        return new Queue(properties.criadoQueue(), true);
     }
 
     @Bean
-    public Binding cartaoBinding(Queue cartaoQueue, DirectExchange cartaoExchange, RabbitMqProperties properties) {
-        return BindingBuilder.bind(cartaoQueue)
+    public Queue cartaoAtivadoQueue(RabbitMqProperties properties) {
+        return new Queue(properties.ativadoQueue(), true);
+    }
+
+    @Bean
+    public Queue cartaoCanceladoQueue(RabbitMqProperties properties) {
+        return new Queue(properties.canceladoQueue(), true);
+    }
+
+    @Bean
+    public Binding cartaoCriadoBinding(Queue cartaoCriadoQueue, DirectExchange cartaoExchange, RabbitMqProperties properties) {
+        return BindingBuilder.bind(cartaoCriadoQueue)
                 .to(cartaoExchange)
-                .with(properties.routingKey());
+                .with(properties.criadoRoutingKey());
+    }
+
+    @Bean
+    public Binding cartaoAtivadoBinding(Queue cartaoAtivadoQueue, DirectExchange cartaoExchange, RabbitMqProperties properties) {
+        return BindingBuilder.bind(cartaoAtivadoQueue)
+                .to(cartaoExchange)
+                .with(properties.ativadoRoutingKey());
+    }
+
+    @Bean
+    public Binding cartaoCanceladoBinding(Queue cartaoCanceladoQueue, DirectExchange cartaoExchange, RabbitMqProperties properties) {
+        return BindingBuilder.bind(cartaoCanceladoQueue)
+                .to(cartaoExchange)
+                .with(properties.canceladoRoutingKey());
     }
 
     @Bean

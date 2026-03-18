@@ -5,7 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app.rabbitmq")
 public record RabbitMqProperties(
         String exchange,
-        String queue,
-        String routingKey
+        String criadoQueue,
+        String ativadoQueue,
+        String canceladoQueue,
+        String criadoRoutingKey,
+        String ativadoRoutingKey,
+        String canceladoRoutingKey
 ) {
 }
