@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/cartoesdb
+    username: ${DB_USERNAME:cartoes}
+    password: ${DB_PASSWORD:cartoes}
+    driver-class-name: org.postgresql.Driver
+  h2:
+    console:
+      enabled: false
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}

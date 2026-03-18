@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: cartoes-microservice
+  profiles:
+    default: local
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  time-zone: ${APP_TIME_ZONE:America/Sao_Paulo}
+  rabbitmq:
+    exchange: ${CARTAO_EXCHANGE:cartoes.exchange}
+    criado-queue: ${CARTAO_CRIADO_QUEUE:cartoes.criados.queue}
+    ativado-queue: ${CARTAO_ATIVADO_QUEUE:cartoes.ativados.queue}
+    cancelado-queue: ${CARTAO_CANCELADO_QUEUE:cartoes.cancelados.queue}
+    criado-routing-key: ${CARTAO_CRIADO_ROUTING_KEY:cartao.criado}
+    ativado-routing-key: ${CARTAO_ATIVADO_ROUTING_KEY:cartao.ativado}
+    cancelado-routing-key: ${CARTAO_CANCELADO_ROUTING_KEY:cartao.cancelado}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

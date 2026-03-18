@@ -1,104 +1,210 @@
-# 🪪 Microserviço de Cartões
+# Microservico de Cartoes
 
-Microserviço responsável pela **criação, ativação e cancelamento de cartões físicos e online**, com persistência em banco de dados relacional e publicação de eventos em mensageria (**RabbitMQ**).
+Microservico Spring Boot para criacao, ativacao e cancelamento de cartoes fisicos e online, com persistencia em PostgreSQL e publicacao de eventos no RabbitMQ.
 
-Este projeto foi desenvolvido como **prova técnica**, com foco em **clareza, organização, boas práticas e regras de negócio**.
+## Descricao do projeto
 
----
+O servico implementa o ciclo de vida de cartoes com foco em regras de negocio claras:
 
-## 📄 Descrição
+- criacao automatica de um cartao `FISICO` e um `ONLINE`
+- ativacao apenas de cartao fisico em `PENDENTE_ATIVACAO`
+- cancelamento apenas de cartao em `ATIVO`
+- persistencia relacional com Spring Data JPA
+- publicacao de eventos de criacao, ativacao e cancelamento no RabbitMQ
 
-O serviço gerencia o ciclo de vida de cartões, permitindo:
+## Tecnologias usadas
 
-- criação de cartões físicos e online;
-- ativação de cartões físicos;
-- cancelamento de cartões ativos;
-- persistência em banco de dados relacional;
-- publicação de eventos de criação via mensageria.
-
----
-
-## 🛠️ Tecnologias Utilizadas
-
-- Java 17+
+- Java 17
 - Spring Boot
 - Spring Web
 - Spring Data JPA
-- PostgreSQL / H2
+- PostgreSQL
 - RabbitMQ
 - Spring AMQP
 - Lombok
-- Springdoc OpenAPI (Swagger)
-- Docker
-- Docker Compose
+- Springdoc OpenAPI
+- Docker e Docker Compose
+- JUnit 5 e Mockito
 
----
+## Estrutura do projeto
 
-## 🏗️ Arquitetura
+```text
+br.com.exemplo.cartoes
+├── config
+├── controller
+│   └── dto
+├── domain
+│   ├── entity
+│   ├── enums
+│   └── event
+├── exception
+├── repository
+└── service
+```
 
-O projeto segue uma arquitetura em camadas:
+## Profiles
 
-- **Controller**: exposição dos endpoints REST
-- **Service**: regras de negócio
-- **Repository**: acesso a dados
-- **Domain**: entidades, enums e eventos
-- **Config**: configurações de infraestrutura, como RabbitMQ
+- `local`: conecta em PostgreSQL e RabbitMQ expostos em `localhost`
+- `docker`: conecta nos servicos `postgres` e `rabbitmq` da rede do Docker Compose
 
----
+O projeto usa `local` como profile padrao.
 
-## 📌 Funcionalidades
+## Como subir com Docker
 
-### ✅ Criação de cartões
+Para subir aplicacao, PostgreSQL e RabbitMQ:
 
-Ao criar um cartão, o sistema gera automaticamente:
+```bash
+docker compose up --build
+```
 
-- **Cartão físico**
-  - situação inicial: `PENDENTE_ATIVACAO`
-- **Cartão online**
-  - situação inicial: `ATIVO`
+Para executar em background:
 
-Além disso, o sistema:
+```bash
+docker compose up -d --build
+```
 
-- persiste os cartões no banco de dados;
-- publica um evento de criação para cada cartão.
+## Como rodar localmente
 
-### ✅ Ativação de cartão
+1. Suba PostgreSQL e RabbitMQ:
 
-Permite ativar **apenas cartões físicos**.
+```bash
+docker compose up -d postgres rabbitmq
+```
 
-**Regras:**
-- o cartão deve ser do tipo **FÍSICO**;
-- a situação atual deve ser `PENDENTE_ATIVACAO`.
+2. Rode a aplicacao com o profile local.
 
-### ✅ Cancelamento de cartão
+Windows PowerShell:
 
-Permite cancelar cartões ativos.
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
+```
 
-**Regra:**
-- a situação atual deve ser `ATIVO`.
+macOS:
 
-Após o cancelamento, o cartão passa para a situação `CANCELADO`.
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
 
----
+## Passos de teste da aplicacao
 
-## 🌐 Endpoints
+### Windows PowerShell / macOS
 
-### ➕ Criar cartões
+Subir o ambiente:
 
-**POST** `/cartoes`
+```bash
+docker compose up -d --build
+```
 
-#### Exemplo de requisição
+Verificar os containers:
 
-```json
+```bash
+docker compose ps
+```
+
+Consultar os cartoes gravados no PostgreSQL:
+
+```bash
+docker exec -it cartoes-postgres psql -U cartoes -d cartoesdb -c "select id, cpf, tipo_cartao, situacao, data_criacao, data_ativacao, data_cancelamento from cartoes order by data_criacao, id;"
+```
+
+Parar o ambiente:
+
+```bash
+docker compose down
+```
+
+Parar o ambiente removendo os volumes:
+
+```bash
+docker compose down -v
+```
+
+## URLs
+
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- RabbitMQ Management: `http://localhost:15672`
+- PostgreSQL: `localhost:5432`
+
+Credenciais padrao do RabbitMQ:
+
+- usuario: `guest`
+- senha: `guest`
+
+## Endpoints
+
+- `POST /cartoes`
+- `POST /cartoes/{id}/ativar`
+- `POST /cartoes/{id}/cancelar`
+
+## Exemplos de chamadas HTTP
+
+### Criar cartoes
+
+```http
+POST /cartoes
+Content-Type: application/json
+
 {
   "cpf": "12345678901",
   "nomeImpresso": "JOAO DA SILVA",
   "produto": "CREDITO",
   "subproduto": "PLATINUM"
 }
+```
 
----
+Observe os `id`s retornados na resposta. Use o `id` do cartao `FISICO` para ativacao e o `id` de um cartao em situacao `ATIVO` para cancelamento.
 
-## 👤 Autor
+### Ativar cartao
+
+```http
+POST /cartoes/{idDoCartaoFisico}/ativar
+```
+
+PowerShell:
+
+```powershell
+Invoke-WebRequest -Method POST http://localhost:8080/cartoes/{idDoCartaoFisico}/ativar
+```
+
+### Cancelar cartao
+
+```http
+POST /cartoes/{idDoCartaoAtivo}/cancelar
+```
+
+PowerShell:
+
+```powershell
+Invoke-WebRequest -Method POST http://localhost:8080/cartoes/{idDoCartaoAtivo}/cancelar
+```
+
+## Regras de negocio
+
+- Ao criar, o sistema gera:
+  - um cartao `FISICO` com situacao `PENDENTE_ATIVACAO`
+  - um cartao `ONLINE` com situacao `ATIVO`
+- So cartoes `FISICO` em `PENDENTE_ATIVACAO` podem ser ativados
+- So cartoes em `ATIVO` podem ser cancelados
+- Erros de regra retornam `400`
+- Cartoes inexistentes retornam `404`
+
+## Testes
+
+Para executar os testes.
+
+Windows PowerShell:
+
+```powershell
+.\mvnw.cmd test
+```
+
+macOS:
+
+```bash
+./mvnw test
+```
+
+## Autor
 
 Desenvolvido por Eliesio Junior Targino de Lima.
