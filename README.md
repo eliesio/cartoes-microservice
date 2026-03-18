@@ -83,6 +83,72 @@ No PowerShell:
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
 ```
 
+## Passos de teste da aplicacao
+
+### Windows PowerShell
+
+Subir o ambiente:
+
+```powershell
+docker compose up -d --build
+```
+
+Verificar os containers:
+
+```powershell
+docker compose ps
+```
+
+Consultar os cartoes gravados no PostgreSQL:
+
+```powershell
+docker exec -it cartoes-postgres psql -U cartoes -d cartoesdb -c "select id, cpf, tipo_cartao, situacao, data_criacao from cartoes order by id;"
+```
+
+Parar o ambiente:
+
+```powershell
+docker compose down
+```
+
+Parar o ambiente removendo os volumes:
+
+```powershell
+docker compose down -v
+```
+
+### macOS
+
+Subir o ambiente:
+
+```bash
+docker compose up -d --build
+```
+
+Verificar os containers:
+
+```bash
+docker compose ps
+```
+
+Consultar os cartoes gravados no PostgreSQL:
+
+```bash
+docker exec -it cartoes-postgres psql -U cartoes -d cartoesdb -c "select id, cpf, tipo_cartao, situacao, data_criacao from cartoes order by id;"
+```
+
+Parar o ambiente:
+
+```bash
+docker compose down
+```
+
+Parar o ambiente removendo os volumes:
+
+```bash
+docker compose down -v
+```
+
 ## URLs
 
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
@@ -117,16 +183,30 @@ Content-Type: application/json
 }
 ```
 
+Observe os `id`s retornados na resposta. Use o `id` do cartao `FISICO` para ativacao e o `id` de um cartao em situacao `ATIVO` para cancelamento.
+
 ### Ativar cartao
 
 ```http
-POST /cartoes/1/ativar
+POST /cartoes/{idDoCartaoFisico}/ativar
+```
+
+PowerShell:
+
+```powershell
+Invoke-WebRequest -Method POST http://localhost:8080/cartoes/{idDoCartaoFisico}/ativar
 ```
 
 ### Cancelar cartao
 
 ```http
-POST /cartoes/2/cancelar
+POST /cartoes/{idDoCartaoAtivo}/cancelar
+```
+
+PowerShell:
+
+```powershell
+Invoke-WebRequest -Method POST http://localhost:8080/cartoes/{idDoCartaoAtivo}/cancelar
 ```
 
 ## Regras de negocio
