@@ -12,6 +12,7 @@ import br.com.exemplo.cartoes.domain.enums.SituacaoCartao;
 import br.com.exemplo.cartoes.domain.enums.TipoCartao;
 import br.com.exemplo.cartoes.exception.RegraNegocioException;
 import br.com.exemplo.cartoes.repository.CartaoRepository;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,9 @@ class CartaoServiceTest {
     @Mock
     private CartaoEventProducer cartaoEventProducer;
 
+    @Mock
+    private TransactionDateTimeProvider transactionDateTimeProvider;
+
     @InjectMocks
     private CartaoService cartaoService;
 
@@ -39,13 +43,16 @@ class CartaoServiceTest {
                 .tipoCartao(TipoCartao.FISICO)
                 .situacao(SituacaoCartao.PENDENTE_ATIVACAO)
                 .build();
+            LocalDateTime dataAtivacao = LocalDateTime.of(2026, 3, 18, 10, 27, 0);
 
         when(cartaoRepository.findById(1L)).thenReturn(Optional.of(cartao));
+            when(transactionDateTimeProvider.now()).thenReturn(dataAtivacao);
         when(cartaoRepository.save(any(Cartao.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Cartao cartaoAtivado = cartaoService.ativarCartao(1L);
 
         assertEquals(SituacaoCartao.ATIVO, cartaoAtivado.getSituacao());
+            assertEquals(dataAtivacao, cartaoAtivado.getDataAtivacao());
         verify(cartaoRepository).save(cartao);
         verify(cartaoEventProducer).publicarCartaoAtivado(any());
     }

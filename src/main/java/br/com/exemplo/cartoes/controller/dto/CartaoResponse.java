@@ -22,8 +22,12 @@ public record CartaoResponse(
         TipoCartao tipoCartao,
     @Schema(description = "Situacao atual do cartao", example = "ATIVO")
         SituacaoCartao situacao,
-    @Schema(description = "Data de criacao do cartao", example = "2026-03-17T10:14:03.059219")
-        LocalDateTime dataCriacao
+    @Schema(description = "Data de criacao do cartao", example = "2026-03-17T10:14:03")
+        LocalDateTime dataCriacao,
+    @Schema(description = "Data de ativacao do cartao", example = "2026-03-17T10:20:15")
+        LocalDateTime dataAtivacao,
+    @Schema(description = "Data de cancelamento do cartao", example = "2026-03-17T10:35:42")
+        LocalDateTime dataCancelamento
 ) {
 
     public static CartaoResponse from(Cartao cartao) {
@@ -35,7 +39,9 @@ public record CartaoResponse(
                 cartao.getSubproduto(),
                 cartao.getTipoCartao(),
                 cartao.getSituacao(),
-                cartao.getDataCriacao()
+                cartao.getDataCriacao(),
+                cartao.getDataAtivacao(),
+                cartao.getDataCancelamento()
         );
     }
 }

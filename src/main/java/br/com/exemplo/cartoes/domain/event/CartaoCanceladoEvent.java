@@ -19,7 +19,7 @@ public class CartaoCanceladoEvent {
     private String cpf;
     private TipoCartao tipoCartao;
     private SituacaoCartao situacao;
-    private LocalDateTime dataCriacao;
+    private LocalDateTime dataCancelamento;
 
     public static CartaoCanceladoEvent from(Cartao cartao) {
         return CartaoCanceladoEvent.builder()
@@ -27,7 +27,7 @@ public class CartaoCanceladoEvent {
                 .cpf(cartao.getCpf())
                 .tipoCartao(cartao.getTipoCartao())
                 .situacao(cartao.getSituacao())
-                .dataCriacao(cartao.getDataCriacao())
+                .dataCancelamento(cartao.getDataCancelamento())
                 .build();
     }
 }

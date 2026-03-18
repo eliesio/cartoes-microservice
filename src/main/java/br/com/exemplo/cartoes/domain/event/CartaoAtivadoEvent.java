@@ -19,7 +19,7 @@ public class CartaoAtivadoEvent {
     private String cpf;
     private TipoCartao tipoCartao;
     private SituacaoCartao situacao;
-    private LocalDateTime dataCriacao;
+    private LocalDateTime dataAtivacao;
 
     public static CartaoAtivadoEvent from(Cartao cartao) {
         return CartaoAtivadoEvent.builder()
@@ -27,7 +27,7 @@ public class CartaoAtivadoEvent {
                 .cpf(cartao.getCpf())
                 .tipoCartao(cartao.getTipoCartao())
                 .situacao(cartao.getSituacao())
-                .dataCriacao(cartao.getDataCriacao())
+                .dataAtivacao(cartao.getDataAtivacao())
                 .build();
     }
 }

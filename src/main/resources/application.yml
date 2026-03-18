@@ -12,6 +12,7 @@ spring:
         format_sql: true
 
 app:
+  time-zone: ${APP_TIME_ZONE:America/Sao_Paulo}
   rabbitmq:
     exchange: ${CARTAO_EXCHANGE:cartoes.exchange}
     criado-queue: ${CARTAO_CRIADO_QUEUE:cartoes.criados.queue}

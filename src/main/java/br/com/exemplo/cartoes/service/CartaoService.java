@@ -21,12 +21,15 @@ public class CartaoService {
 
     private final CartaoRepository cartaoRepository;
     private final CartaoEventProducer cartaoEventProducer;
+    private final TransactionDateTimeProvider transactionDateTimeProvider;
 
     @Transactional
     public List<Cartao> criarCartoes(CartaoCreateRequest request) {
+        var dataCriacao = transactionDateTimeProvider.now();
+
         List<Cartao> cartoes = List.of(
-                criarCartao(request, TipoCartao.FISICO, SituacaoCartao.PENDENTE_ATIVACAO),
-                criarCartao(request, TipoCartao.ONLINE, SituacaoCartao.ATIVO)
+                criarCartao(request, TipoCartao.FISICO, SituacaoCartao.PENDENTE_ATIVACAO, dataCriacao),
+                criarCartao(request, TipoCartao.ONLINE, SituacaoCartao.ATIVO, dataCriacao)
         );
 
         List<Cartao> cartoesSalvos = cartaoRepository.saveAll(cartoes);
@@ -47,6 +50,7 @@ public class CartaoService {
         }
 
         cartao.setSituacao(SituacaoCartao.ATIVO);
+        cartao.setDataAtivacao(transactionDateTimeProvider.now());
         Cartao cartaoAtualizado = cartaoRepository.save(cartao);
         cartaoEventProducer.publicarCartaoAtivado(CartaoAtivadoEvent.from(cartaoAtualizado));
         return cartaoAtualizado;
@@ -61,12 +65,14 @@ public class CartaoService {
         }
 
         cartao.setSituacao(SituacaoCartao.CANCELADO);
+        cartao.setDataCancelamento(transactionDateTimeProvider.now());
         Cartao cartaoAtualizado = cartaoRepository.save(cartao);
         cartaoEventProducer.publicarCartaoCancelado(CartaoCanceladoEvent.from(cartaoAtualizado));
         return cartaoAtualizado;
     }
 
-    private Cartao criarCartao(CartaoCreateRequest request, TipoCartao tipoCartao, SituacaoCartao situacao) {
+    private Cartao criarCartao(CartaoCreateRequest request, TipoCartao tipoCartao, SituacaoCartao situacao,
+                               java.time.LocalDateTime dataCriacao) {
         return Cartao.builder()
                 .cpf(request.cpf())
                 .nomeImpresso(request.nomeImpresso())
@@ -74,6 +80,7 @@ public class CartaoService {
                 .subproduto(request.subproduto())
                 .tipoCartao(tipoCartao)
                 .situacao(situacao)
+                .dataCriacao(dataCriacao)
                 .build();
     }
 

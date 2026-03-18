@@ -104,7 +104,7 @@ docker compose ps
 Consultar os cartoes gravados no PostgreSQL:
 
 ```bash
-docker exec -it cartoes-postgres psql -U cartoes -d cartoesdb -c "select id, cpf, tipo_cartao, situacao, data_criacao from cartoes order by id;"
+docker exec -it cartoes-postgres psql -U cartoes -d cartoesdb -c "select id, cpf, tipo_cartao, situacao, data_criacao, data_ativacao, data_cancelamento from cartoes order by data_criacao, id;"
 ```
 
 Parar o ambiente:
