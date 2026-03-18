@@ -71,53 +71,23 @@ docker compose up -d --build
 docker compose up -d postgres rabbitmq
 ```
 
-2. Rode a aplicacao com o profile local:
+2. Rode a aplicacao com o profile local.
 
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
-```
-
-No PowerShell:
+Windows PowerShell:
 
 ```powershell
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
 ```
 
+macOS:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
+
 ## Passos de teste da aplicacao
 
-### Windows PowerShell
-
-Subir o ambiente:
-
-```powershell
-docker compose up -d --build
-```
-
-Verificar os containers:
-
-```powershell
-docker compose ps
-```
-
-Consultar os cartoes gravados no PostgreSQL:
-
-```powershell
-docker exec -it cartoes-postgres psql -U cartoes -d cartoesdb -c "select id, cpf, tipo_cartao, situacao, data_criacao from cartoes order by id;"
-```
-
-Parar o ambiente:
-
-```powershell
-docker compose down
-```
-
-Parar o ambiente removendo os volumes:
-
-```powershell
-docker compose down -v
-```
-
-### macOS
+### Windows PowerShell / macOS
 
 Subir o ambiente:
 
@@ -221,16 +191,18 @@ Invoke-WebRequest -Method POST http://localhost:8080/cartoes/{idDoCartaoAtivo}/c
 
 ## Testes
 
-Para executar os testes:
+Para executar os testes.
 
-```bash
-./mvnw test
-```
-
-No PowerShell:
+Windows PowerShell:
 
 ```powershell
 .\mvnw.cmd test
+```
+
+macOS:
+
+```bash
+./mvnw test
 ```
 
 ## Autor
